@@ -11,7 +11,7 @@ class LoginService {
     map['password'] = password;
     await http
         .post(
-      Uri.parse(Constants.APIURL + "/api/login/"),
+      Uri.parse("${Constants.APIURL}/api/login/"),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test/src/pages/home.dart';
 import 'package:test/src/pages/recover_pass.dart';
 import 'package:test/src/services/login_service.dart';
 
@@ -132,10 +133,12 @@ class _Login extends State<Login> {
                             if (_formKey.currentState!.validate())
                               {
                                 // If the form is valid, Call a server
-                                LoginService.login(
-                                    context,
-                                    _username.text.trim(),
-                                    _password.text.trim())
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Home(),
+                                  ),
+                                ),
                               },
                           },
                         ),
