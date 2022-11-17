@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test/src/pages/home.dart';
 import 'package:test/src/pages/recover_pass.dart';
 import 'package:test/src/services/login_service.dart';
+import 'package:test/src/utils/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -11,13 +13,23 @@ class Login extends StatefulWidget {
 }
 
 class _Login extends State<Login> {
-  var scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _username = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _obscureText = true;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _initAdmin();
+  }
+
+  _initAdmin() async {
+    SharedPreferencesGlobal.prefs = await SharedPreferences.getInstance();
+    await SharedPreferencesGlobal.prefs.setString('TestUser', 'Test1234\$');
+  }
+
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
@@ -129,17 +141,17 @@ class _Login extends State<Login> {
                             'Iniciar Sesión',
                             style: TextStyle(fontSize: 16),
                           ),
-                          onPressed: () => {
-                            if (_formKey.currentState!.validate())
-                              {
-                                // If the form is valid, Call a server
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const Home(),
-                                  ),
-                                ),
-                              },
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              LoginService.login(
+                                      context, _username.text, _password.text)
+                                  .then((result) {
+                                if (result) {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => const Home()));
+                                }
+                              });
+                            }
                           },
                         ),
                       ),
